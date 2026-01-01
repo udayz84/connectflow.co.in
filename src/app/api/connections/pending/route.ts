@@ -137,7 +137,7 @@ export async function GET(request: NextRequest) {
 
     // Get user info for all connections
     const transformedConnections = await Promise.all(
-      connections.map(async (conn) => {
+      connections.map(async (conn: { id: string; status: string; message: string | null; createdAt: Date; userId: string; connectedUserId: string }) => {
         const otherUserId = type === 'received' ? conn.userId : conn.connectedUserId;
         const otherUser = await getUserInfo(otherUserId);
         

@@ -31,7 +31,7 @@ export async function GET(request: NextRequest) {
 
     const connectedUserIds = new Set([
       currentUserId,
-      ...userConnections.map(conn => 
+      ...userConnections.map((conn: { userId: string; connectedUserId: string }) => 
         conn.userId === currentUserId ? conn.connectedUserId : conn.userId
       )
     ]);
@@ -173,21 +173,21 @@ export async function GET(request: NextRequest) {
     // Get emails for all suggestions to map to unified User IDs
     const jobSeekerEmails = await prisma.jobSeeker.findMany({
       where: {
-        id: { in: jobSeekerSuggestions.map(u => u.id) }
+        id: { in: jobSeekerSuggestions.map((u: { id: string }) => u.id) }
       },
       select: { id: true, email: true }
     });
 
     const recruiterEmails = await prisma.recruiter.findMany({
       where: {
-        id: { in: recruiterSuggestions.map(u => u.id) }
+        id: { in: recruiterSuggestions.map((u: { id: string }) => u.id) }
       },
       select: { id: true, email: true }
     });
 
     const emailMap = new Map<string, string>([
-      ...jobSeekerEmails.map(u => [u.id, u.email] as [string, string]),
-      ...recruiterEmails.map(u => [u.id, u.email] as [string, string])
+      ...jobSeekerEmails.map((u: { id: string; email: string | null }) => [u.id, u.email] as [string, string]),
+      ...recruiterEmails.map((u: { id: string; email: string | null }) => [u.id, u.email] as [string, string])
     ]);
 
     // Transform and combine suggestions with unified User IDs

@@ -121,14 +121,14 @@ export async function POST(request: NextRequest) {
       where: {
         // Exclude jobs user has already applied to
         id: {
-          notIn: user.applications.map(app => app.jobId)
+          notIn: user.applications.map((app: { jobId: string }) => app.jobId)
         }
       },
       orderBy: { postedDate: 'desc' }
     });
 
     // Get unique recruiter IDs from jobs
-    const recruiterIds = [...new Set(allJobs.map(job => job.postedBy).filter(Boolean))];
+    const recruiterIds = [...new Set(allJobs.map((job: { postedBy: string | null }) => job.postedBy).filter(Boolean))];
     
     // Fetch recruiter data separately to avoid Prisma relation errors
     const recruiters = await prisma.recruiter.findMany({
@@ -144,10 +144,10 @@ export async function POST(request: NextRequest) {
     });
     
     // Create a map of recruiter data for quick lookup
-    const recruiterMap = new Map(recruiters.map(r => [r.id, r]));
+    const recruiterMap = new Map(recruiters.map((r: { id: string; companyName: string | null; companyDescription: string | null; companyBenefits: string[] | null }) => [r.id, r]));
     
     // Attach recruiter data to jobs
-    const jobsWithRecruiters = allJobs.map(job => ({
+    const jobsWithRecruiters = allJobs.map((job: { postedBy: string | null; company: string | null; [key: string]: any }) => ({
       ...job,
       recruiter: recruiterMap.get(job.postedBy) || {
         companyName: job.company,

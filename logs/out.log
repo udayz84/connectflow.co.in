@@ -37,3 +37,29 @@
 2025-12-31T20:46:38:  ✓ Starting...
 2025-12-31T20:46:38:  ✓ Ready in 487ms
 2025-12-31T20:46:38: ✅ Cloudinary configured successfully
+2026-01-01T10:10:11: prisma:error 
+2026-01-01T10:10:11: Invalid `prisma.recruiter.findUnique()` invocation:
+2026-01-01T10:10:11: 
+2026-01-01T10:10:11: 
+2026-01-01T10:10:11: Inconsistent column data: Malformed ObjectID: provided hex string representation must be exactly 12 bytes, instead got: "4", length 1.
+2026-01-01T22:26:03: prisma:error 
+2026-01-01T22:26:03: Invalid `prisma.job.findUnique()` invocation:
+2026-01-01T22:26:03: 
+2026-01-01T22:26:03: 
+2026-01-01T22:26:03: Inconsistent column data: Malformed ObjectID: provided hex string representation must be exactly 12 bytes, instead got: "2", length 1.
+2026-01-01T22:28:27: prisma:error 
+2026-01-01T22:28:27: Invalid `prisma.recruiter.findUnique()` invocation:
+2026-01-01T22:28:27: 
+2026-01-01T22:28:27: 
+2026-01-01T22:28:27: Inconsistent column data: Malformed ObjectID: provided hex string representation must be exactly 12 bytes, instead got: "4", length 1.
+2026-01-02T04:56:53: 
+2026-01-02T04:56:53: > connectflow@0.1.0 start /home/ubuntu/htdocs/connectflow
+2026-01-02T04:56:53: > PORT=${PORT:-3005} next start -p $PORT
+2026-01-02T04:56:53: 
+2026-01-02T04:56:57:    ▲ Next.js 15.3.2
+2026-01-02T04:56:57:    - Local:        http://localhost:3005
+2026-01-02T04:56:57:    - Network:      http://31.97.207.118:3005
+2026-01-02T04:56:57: 
+2026-01-02T04:56:57:  ✓ Starting...
+2026-01-02T04:56:59:  ✓ Ready in 4s
+2026-01-02T04:57:08: ✅ Cloudinary configured successfully

@@ -186,6 +186,8 @@ const Navbar = () => {
     return pathname === href || pathname?.startsWith(href + "/");
   };
 
+  const mobileMenuTop = scrolled ? 80 : 96;
+
   return (
     <header 
       className={`fixed top-0 w-full z-50 backdrop-blur-md transition-all duration-300 ${
@@ -386,8 +388,11 @@ const Navbar = () => {
             
             {/* Menu Content */}
             <div 
-              className="lg:hidden fixed top-[88px] left-0 right-0 bottom-0 bg-background z-[65] overflow-y-auto shadow-2xl border-t border-border"
-              style={{ minHeight: 'calc(100vh - 88px)' }}
+              className="lg:hidden fixed left-0 right-0 bottom-0 bg-background z-[65] overflow-y-auto shadow-2xl border-t border-border"
+              style={{
+                top: mobileMenuTop,
+                minHeight: `calc(100vh - ${mobileMenuTop}px)`,
+              }}
             >
               <div className="px-4 py-6">
                 <nav className="space-y-1">

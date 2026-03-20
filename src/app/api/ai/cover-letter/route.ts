@@ -1,8 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import OpenAI from 'openai';
 
-const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
-
 interface CoverLetterAIResponse {
   coverLetter: string;
   suggestions?: string[];
@@ -20,12 +18,29 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    if (!process.env.OPENAI_API_KEY) {
+    const apiKey = process.env.OPENAI_API_KEY;
+    if (!apiKey) {
       return NextResponse.json(
-        { error: 'OpenAI API key not configured' },
-        { status: 500 }
+        {
+          coverLetter: 'OpenAI API key not configured. Please set OPENAI_API_KEY to generate a tailored cover letter.',
+          suggestions: [
+            'Fill in your experience and achievements in the placeholders.',
+            'Match your skills to the job description requirements.',
+            'Keep the tone professional and concise.',
+          ],
+          placeholders: [
+            { key: 'PROJECT_NAME', label: 'Relevant Project Name', hint: 'Add a notable project closely matching the role' },
+            { key: 'TECH_STACK', label: 'Tech Stack', hint: 'List core tools/frameworks used in the project' },
+            { key: 'IMPACT_METRIC', label: 'Impact Metric', hint: 'Quantify outcomes (e.g., performance, revenue, users)' },
+            { key: 'COMPANY_VALUE', label: 'Company Value/Initiative', hint: 'Tie motivation to a specific value/initiative from the company' },
+            { key: 'LEADERSHIP_EXAMPLE', label: 'Leadership Example', hint: 'Brief example of ownership, mentoring, or collaboration' },
+          ],
+        },
+        { status: 200 }
       );
     }
+
+    const openai = new OpenAI({ apiKey });
 
     const prompt = `You are an expert career writer. Based on the JOB DESCRIPTION below, draft a tailored, professional cover letter.
 

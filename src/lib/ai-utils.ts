@@ -1,8 +1,12 @@
 import OpenAI from 'openai';
 
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-});
+function getOpenAI() {
+  const apiKey = process.env.OPENAI_API_KEY;
+  if (!apiKey) {
+    throw new Error('OpenAI API key not configured');
+  }
+  return new OpenAI({ apiKey });
+}
 
 // Generate interview questions using OpenAI
 export async function generateInterviewQuestions(role: string, domain: string): Promise<any[]> {
@@ -26,6 +30,7 @@ export async function generateInterviewQuestions(role: string, domain: string): 
       }
     ]`;
 
+    const openai = getOpenAI();
     const completion = await openai.chat.completions.create({
       model: "gpt-4o-mini",
       messages: [
@@ -89,6 +94,7 @@ Provide feedback that:
 - Provides actionable suggestions for development
 - Maintains professional, constructive tone`;
 
+    const openai = getOpenAI();
     const completion = await openai.chat.completions.create({
       model: "gpt-4o-mini",
       messages: [
@@ -503,6 +509,7 @@ export async function generateFollowUpQuestion(
 
     console.log('Sending prompt to OpenAI...');
 
+    const openai = getOpenAI();
     const completion = await openai.chat.completions.create({
       model: "gpt-4o-mini",
       messages: [
@@ -592,6 +599,7 @@ export async function generateComprehensiveFeedback(
       "nextSteps": "Specific recommendations for career development"
     }`;
 
+    const openai = getOpenAI();
     const completion = await openai.chat.completions.create({
       model: "gpt-4o-mini",
       messages: [
@@ -714,6 +722,7 @@ Return your analysis as a JSON array with this exact structure:
 
 Focus on providing 5-10 most relevant recommendations with detailed analysis.`;
 
+    const openai = getOpenAI();
     const completion = await openai.chat.completions.create({
       model: "gpt-4o-mini",
       messages: [
@@ -822,6 +831,7 @@ Provide analysis in this JSON format:
   ]
 }`;
 
+    const openai = getOpenAI();
     const completion = await openai.chat.completions.create({
       model: "gpt-4o-mini",
       messages: [
@@ -1051,6 +1061,7 @@ ATS OPTIMIZATION FOCUS:
 
 Return only the JSON response.`;
 
+    const openai = getOpenAI();
     const completion = await openai.chat.completions.create({
       model: "gpt-4o-mini",
       messages: [
@@ -1301,6 +1312,7 @@ STUDENT ROADMAP GUIDELINES:
 
 Return only the JSON response.`;
 
+    const openai = getOpenAI();
     const completion = await openai.chat.completions.create({
       model: "gpt-4o-mini",
       messages: [

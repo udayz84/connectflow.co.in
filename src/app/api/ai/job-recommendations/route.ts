@@ -4,10 +4,6 @@ import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 import OpenAI from 'openai';
 
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-});
-
 export async function POST(request: NextRequest) {
   try {
     const session = await getServerSession(authOptions);
@@ -18,6 +14,29 @@ export async function POST(request: NextRequest) {
 
     const { limit = 10, includeAnalysis = true } = await request.json();
     const userId = (session.user as any).id;
+
+    const apiKey = process.env.OPENAI_API_KEY;
+    if (!apiKey) {
+      return NextResponse.json(
+        {
+          recommendations: [],
+          analysis: null,
+          totalJobs: 0,
+          userProfile: {
+            name: (session.user as any)?.name ?? null,
+            currentRole: null,
+            experience: null,
+            skills: [],
+            location: null,
+          },
+          profileComplete: false,
+          message: 'OpenAI API key not configured.',
+        },
+        { status: 200 }
+      );
+    }
+
+    const openai = new OpenAI({ apiKey });
 
     console.log('Job recommendations request for user:', userId);
 
@@ -169,13 +188,13 @@ export async function POST(request: NextRequest) {
 
     // Generate AI recommendations
     console.log('Generating AI recommendations...');
-    const recommendations = await generateJobRecommendations(user, jobsWithRecruiters, limit);
+    const recommendations = await generateJobRecommendations(user, jobsWithRecruiters, limit, openai);
 
     // Generate analysis if requested
     let analysis = null;
     if (includeAnalysis && recommendations.length > 0) {
       console.log('Generating analysis...');
-      analysis = await generateRecommendationAnalysis(user, recommendations);
+      analysis = await generateRecommendationAnalysis(user, recommendations, openai);
     }
 
     console.log('Generated recommendations:', recommendations.length);
@@ -208,7 +227,7 @@ export async function POST(request: NextRequest) {
   }
 }
 
-async function generateJobRecommendations(user: any, jobs: any[], limit: number) {
+async function generateJobRecommendations(user: any, jobs: any[], limit: number, openai: OpenAI) {
   try {
     const prompt = `You are an expert career counselor and job matching specialist. Analyze the following user profile and available jobs to provide personalized job recommendations.
 
@@ -342,7 +361,7 @@ Focus on providing 5-10 most relevant recommendations with detailed analysis.`;
   }
 }
 
-async function generateRecommendationAnalysis(user: any, recommendations: any[]) {
+async function generateRecommendationAnalysis(user: any, recommendations: any[], openai: OpenAI) {
   try {
     const prompt = `Analyze the following job recommendations for this user and provide insights about their career trajectory and job search strategy.
 

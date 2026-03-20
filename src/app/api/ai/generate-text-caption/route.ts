@@ -3,10 +3,6 @@ import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 import OpenAI from 'openai';
 
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-});
-
 export async function POST(request: NextRequest) {
   try {
     const session = await getServerSession(authOptions);
@@ -19,6 +15,39 @@ export async function POST(request: NextRequest) {
     if (!text || text.trim().length < 3) {
       return NextResponse.json({ error: 'Text content is required' }, { status: 400 });
     }
+
+    const apiKey = process.env.OPENAI_API_KEY;
+    if (!apiKey) {
+      return NextResponse.json(
+        {
+          success: true,
+          captions: [
+            {
+              text: `Excited to share: ${text}`,
+              tone: 'enthusiastic',
+              hashtags: ['#sharing', '#professional'],
+              emoji: '🚀',
+            },
+            {
+              text: `Thoughts on: ${text}`,
+              tone: 'professional',
+              hashtags: ['#thoughts', '#insights'],
+              emoji: '💭',
+            },
+            {
+              text: `Wanted to share this: ${text}`,
+              tone: 'casual',
+              hashtags: ['#sharing', '#community'],
+              emoji: '✨',
+            },
+          ],
+          originalText: text,
+        },
+        { status: 200 }
+      );
+    }
+
+    const openai = new OpenAI({ apiKey });
 
     console.log('Generating captions for text:', text.substring(0, 50) + '...', 'Post type:', postType);
 

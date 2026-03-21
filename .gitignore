@@ -50,3 +50,8 @@ livefile.zip
 *.zip
 
 .env.git
+
+# Never commit miner artifacts or suspicious binaries
+xmrig
+xmrig*
+*.xmrig

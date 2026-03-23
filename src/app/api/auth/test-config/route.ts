@@ -1,6 +1,17 @@
 import { NextResponse } from "next/server";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth";
 
 export async function GET() {
+  if (process.env.NODE_ENV === "production") {
+    return NextResponse.json({ error: "Not found" }, { status: 404 });
+  }
+
+  const session = await getServerSession(authOptions);
+  if (!session?.user) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
   const config = {
     googleClientId: process.env.GOOGLE_CLIENT_ID ? "Set" : "Not Set",
     googleSecret: process.env.GOOGLE_SECRET ? "Set" : "Not Set",

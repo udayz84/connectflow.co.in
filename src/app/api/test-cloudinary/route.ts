@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { v2 as cloudinary } from 'cloudinary';
+import { getServerSession } from 'next-auth';
+import { authOptions } from '@/lib/auth';
 
 // Configure Cloudinary
 const hasCloudinaryConfig = process.env.CLOUDINARY_CLOUD_NAME && 
@@ -17,6 +19,15 @@ if (hasCloudinaryConfig) {
 // POST /api/test-cloudinary - Test Cloudinary credentials
 export async function POST(request: NextRequest) {
   try {
+    if (process.env.NODE_ENV === 'production') {
+      return NextResponse.json({ error: 'Not found' }, { status: 404 });
+    }
+
+    const session = await getServerSession(authOptions);
+    if (!session?.user) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
     console.log('🧪 Testing Cloudinary credentials...');
     
     // Check if credentials are configured
@@ -121,6 +132,15 @@ export async function POST(request: NextRequest) {
 // GET /api/test-cloudinary - Get credential status
 export async function GET(request: NextRequest) {
   try {
+    if (process.env.NODE_ENV === 'production') {
+      return NextResponse.json({ error: 'Not found' }, { status: 404 });
+    }
+
+    const session = await getServerSession(authOptions);
+    if (!session?.user) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
     const hasCloudName = !!process.env.CLOUDINARY_CLOUD_NAME;
     const hasApiKey = !!process.env.CLOUDINARY_API_KEY;
     const hasApiSecret = !!process.env.CLOUDINARY_API_SECRET;
